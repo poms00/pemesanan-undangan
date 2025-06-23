@@ -222,7 +222,6 @@
                        
                         <button type="button"
                         onclick="nextStep()" {{-- biar JS jalan --}}
-                        wire:click="submitpemesanan" {{-- biar Livewire juga jalan --}}
                         wire:loading.attr="disabled"
                         wire:target="buatpemesanan"
                         class="btn btn-primary px-4 w-full text-white font-semibold py-2.5 rounded-lg transition duration-200 hover:bg-blue-700"
@@ -322,6 +321,31 @@
     }
 
     function handlePaymentSuccess(result) {
+        console.log('Payment Success:', result);
+        //showSnapSuccess(result);
+
+        // ✅ Kirim data ke Livewire
+        window.dispatchEvent(new CustomEvent('submitpemesanan', {
+            detail: result
+        }));
+    }
+
+    function handlePaymentPending(result) {
+        console.log('Payment Pending:', result);
+        showSnapPending(result);
+
+        // ✅ Kirim data ke Livewire
+        window.dispatchEvent(new CustomEvent('submitpemesanan', {
+            detail: result
+        }));
+    }
+
+    function handlePaymentError(result) {
+        console.error('Payment Error:', result);
+        showSnapError('Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi'));
+    }
+
+    function showSnapSuccess(result) {
         const snapContainer = document.getElementById('snap-container');
         snapContainer.innerHTML = `
             <div class="text-center py-5">
@@ -334,12 +358,9 @@
                 </div>
             </div>
         `;
-        setTimeout(() => {
-            // window.location.href = '/payment-success';
-        }, 3000);
     }
 
-    function handlePaymentPending(result) {
+    function showSnapPending(result) {
         const snapContainer = document.getElementById('snap-container');
         snapContainer.innerHTML = `
             <div class="text-center py-5">
@@ -351,10 +372,6 @@
                 </div>
             </div>
         `;
-    }
-
-    function handlePaymentError(result) {
-        showSnapError('Pembayaran gagal: ' + (result.status_message || 'Silakan coba lagi'));
     }
 
     function showSnapError(message) {
@@ -382,3 +399,4 @@
         loadMidtransSnap();
     }
 </script>
+

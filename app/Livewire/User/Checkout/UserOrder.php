@@ -7,6 +7,7 @@ use App\Models\Pemesanan;
 use App\Models\Transaksi;
 use App\Models\Produk;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
 
 class UserOrder extends Component
 {
@@ -32,7 +33,8 @@ class UserOrder extends Component
     }
 
 
-    public function submitpemesanan()
+    #[On('submitpemesanan')]
+    public function submitpemesanan($data = null)
     {
         $checkout = $this->checkout;
 
