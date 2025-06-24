@@ -1,47 +1,51 @@
-<div class="tw-min-h-screen tw-flex tw-items-center tw-justify-center tw-bg-gray-100">
-    <div class="tw-w-full tw-max-w-md tw-px-6 tw-py-8 tw-bg-white tw-rounded-lg tw-shadow-md">
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="w-100" style="max-width: 400px;">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h1 class="h3 text-center text-primary mb-4">Login</h1>
 
-        <h1 class="tw-text-3xl tw-font-bold tw-text-center tw-mb-6 text-indigo-600">Login</h1>
+                {{-- Session Status --}}
+                @if (session('status'))
+                    <div class="alert alert-success">{{ session('status') }}</div>
+                @endif
 
-        <!-- Session Status -->
-        <x-auth-session-status class="tw-mb-4" :status="session('status')" />
+                <form wire:submit.prevent="login">
+                    {{-- Email --}}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input wire:model.live="form.email" type="email" class="form-control" id="email" required autofocus>
+                        @error('form.email')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-        <form wire:submit.prevent="login">
-            <!-- Email -->
-            <div class="tw-mb-4">
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input wire:model.live="form.email" id="email" type="email" name="email"
-                    class="tw-block tw-w-full tw-mt-1" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('form.email')" class="tw-mt-2" />
+                    {{-- Password --}}
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input wire:model.live="form.password" type="password" class="form-control" id="password" required>
+                        @error('form.password')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Remember Me --}}
+                    <div class="mb-3 form-check d-flex justify-content-between align-items-center">
+                        <div>
+                            <input wire:model.live="form.remember" type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">Remember Me</label>
+                        </div>
+                        <a href="{{ route('register') }}" class="small text-decoration-none">Register</a>
+
+                    </div>
+
+                    {{-- Submit --}}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            Log in
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <!-- Password -->
-            <div class="tw-mb-4">
-                <x-input-label for="password" :value="__('Password')" />
-                <x-text-input wire:model.live="form.password" id="password" type="password" name="password"
-                    class="tw-block tw-w-full tw-mt-1" required autocomplete="current-password" />
-                <x-input-error :messages="$errors->get('form.password')" class="tw-mt-2" />
-            </div>
-
-            <!-- Remember Me -->
-            <div class="tw-flex tw-items-center tw-justify-between tw-mb-4">
-                <label for="remember" class="tw-inline-flex tw-items-center">
-                    <input wire:model.live="form.remember" id="remember" type="checkbox"
-                        class="tw-rounded tw-border-gray-300 tw-text-indigo-600 tw-shadow-sm focus:tw-ring-indigo-500" />
-                    <span class="tw-ml-2 tw-text-sm tw-text-gray-600">{{ __('Remember me') }}</span>
-                </label>
-
-                <a href="{{ route('password.request') }}" class="tw-text-sm tw-text-indigo-500 hover:tw-underline">
-                    Forgot Password?
-                </a>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="tw-mt-6">
-                <x-primary-button class="tw-w-full">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>

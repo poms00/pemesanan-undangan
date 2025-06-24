@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::get('/login', \App\Livewire\Auth\Login::class);
+Route::get('/login', function () {
+    return view('auth.login');
+});
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

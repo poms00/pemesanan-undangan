@@ -21,7 +21,9 @@
 
 
     <!-- Vite CSS & JS -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CrJ1lieA.css') }}">
+    <script src="{{ asset('build/assets/app-BQ20r_nR.js') }}" defer></script>
+    
 
     <!-- Livewire Styles -->
     @livewireStyles

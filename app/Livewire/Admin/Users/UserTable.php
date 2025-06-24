@@ -85,6 +85,6 @@ class UserTable extends Component
 
         return view('livewire.admin.users.user-table', [
             'users' => $users,
-        ])->layout('components.layouts.admin.admin');
+        ])->layout('livewire.layouts.admin.admin');
     }
 }

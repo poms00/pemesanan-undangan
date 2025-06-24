@@ -70,6 +70,6 @@ class ProduksTable extends Component
 
         return view('livewire.admin.produks.produks-table', [
             'produks' => $produks
-        ])->layout('components.layouts.admin.admin');
+        ])->layout('livewire.layouts.admin.admin');
     }
 }

@@ -20,10 +20,6 @@ class Login extends Component
             ? '/admin/dashboard'
             : '/user/dashboard';
 
-        // GANTI INI:
-        // redirect()->intended($redirect)->send();
-
-        // JADI:
         redirect()->intended($redirect);
     }
 
