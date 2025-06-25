@@ -1,4 +1,4 @@
-*
-!public/
-!public/build/
-!.gitignore
+/public/build/*
+!/public/build/.gitkeep
+!/public/build/assets
+!/public/build/manifest.json

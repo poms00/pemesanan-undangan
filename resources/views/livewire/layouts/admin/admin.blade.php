@@ -19,8 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vite CSS & JS -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-CrJ1lieA.css') }}">
-    <script src="{{ asset('build/assets/app-BQ20r_nR.js') }}" defer></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Livewire Styles -->
     @livewireStyles
