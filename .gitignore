@@ -1,19 +1,35 @@
+# Cache & dependencies
 /.phpunit.cache
 /node_modules
+/vendor
+/npm-debug.log
+/yarn-error.log
+
+# Laravel specific
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
+/bootstrap/compiled.php
+/app/storage/
+/storage/pail
+
+# Public path variant
+/public_html/storage
+/public_html/hot
+
+# Env & config
 .env
 .env.backup
 .env.production
 .phpunit.result.cache
+.phpactor.json
+auth.json
 Homestead.json
 Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
+
+# IDE/editor/dev
 /.fleet
 /.idea
 /.vscode
+/.vagrant
