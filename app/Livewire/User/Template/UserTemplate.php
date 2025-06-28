@@ -10,6 +10,20 @@ use App\Services\MidtransService;
 class UserTemplate extends Component
 {
     public $search = '';
+    public string $filter = '';
+    public bool $showFilter = false;
+
+    public function toggleFilter()
+    {
+        $this->showFilter = !$this->showFilter;
+    }
+
+    public function setFilter(string $filter)
+    {
+        $this->filter = $filter;
+        $this->showFilter = false;
+    }
+
 
     public function pilihProduk($produkId)
     {
@@ -86,14 +100,31 @@ class UserTemplate extends Component
 
     public function render()
     {
-        $produks = Produk::with('kategori')
-            ->where('nama', 'like', '%' . $this->search . '%')
-            ->orWhereHas('kategori', fn($q) => $q->where('nama_kategori', 'like', '%' . $this->search . '%'))
-            ->orderBy('id', 'asc') // urutkan dari ID kecil
-            ->get(); // ambil semua data tanpa pagination
+        // Query dasar: hanya produk dengan status "aktif", cocok dengan pencarian nama produk atau nama kategori
+        $baseQuery = Produk::with('kategori')
+            ->where('status', 'aktif')
+            ->where(function ($q) {
+                $q->where('nama', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('kategori', fn($q) => $q->where('nama_kategori', 'like', '%' . $this->search . '%'));
+            });
+
+        // Kumpulan data untuk masing-masing kategori
+        $semuaProduk = (clone $baseQuery)->orderBy('id', 'asc')->get();
+        $produkPromo = (clone $baseQuery)->where('diskon', '>', 0)->get();
+        $produkBaru  = (clone $baseQuery)->latest()->take(8)->get();
+
+        // Tentukan produk yang ditampilkan berdasarkan filter aktif
+        $produks = match ($this->filter) {
+            'promo' => $produkPromo,
+            'baru'  => $produkBaru,
+            default => $semuaProduk,
+        };
 
         return view('livewire.user.template.user-template', [
-            'produks' => $produks
+            'semuaProduk' => $semuaProduk,
+            'produkPromo' => $produkPromo,
+            'produkBaru'  => $produkBaru,
+            'produks'     => $produks, // produk yang sedang difilter (utama ditampilkan)
         ])->layout('livewire.layouts.user.user-layout');
     }
 }

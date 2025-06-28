@@ -25,7 +25,7 @@ $el._x_cleanup = () => {
 
     <!-- Header -->
     <header
-        class="tw-fixed tw-top-0 tw-right-0 tw-z-40 tw-bg-white tw-border-b tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 tw-h-16"
+        class="tw-fixed tw-top-0 tw-right-0 tw-z-40 tw-bg-white tw-border-b tw-border-gray-200 dark:tw-bg-gray-800 dark:tw-border-gray-700 tw-h-15 "
         x-bind:class="{
             'tw-left-0': !isDesktop || sidebarIsOpen,
             'tw-left-64': !sidebarCollapsed && isDesktop && !sidebarIsOpen,
@@ -243,7 +243,7 @@ $el._x_cleanup = () => {
         </div>
 
         <!-- Sidebar Links -->
-        <div class="tw-flex tw-flex-col tw-gap-2 tw-p-3">
+        <div class="tw-flex tw-flex-col tw-gap-4 tw-p-3">
 
             <!-- Dashboard Link -->
             <div x-data="{ tooltip: false }" class="tw-relative">
@@ -322,26 +322,25 @@ $el._x_cleanup = () => {
                     </div>
                 </div>
             </div>
+
             <!--produks link-->
             <div x-data="{ tooltip: false }" class="tw-relative">
                 @php
-                $isActive = $activeMenu === 'produks';
-            @endphp
-            
-                <a href="{{ route('admin.produks.produks-table') }}"
-                    wire:navigate
+                    $isActive = $activeMenu === 'produks';
+                @endphp
+
+                <a href="{{ route('admin.produks.produks-table') }}" wire:navigate
                     class="tw-flex tw-items-center tw-rounded-lg tw-gap-3 tw-px-4 tw-py-3 tw-text-sm tw-font-medium tw-transition-all tw-duration-200 tw-group
                         {{ $isActive ? 'tw-bg-blue-50 tw-text-blue-700 dark:tw-bg-blue-900 dark:tw-text-blue-300' : 'tw-text-gray-700 hover:tw-bg-gray-100 hover:tw-text-gray-900 dark:tw-text-gray-300 dark:hover:tw-bg-gray-700 dark:hover:tw-text-gray-100' }}
                         focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
-                    x-on:mouseenter="tooltip = (sidebarCollapsed && isDesktop)" 
-                    x-on:mouseleave="tooltip = false">
-            
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="tw-size-6 tw-shrink-0">
+                    x-on:mouseenter="tooltip = (sidebarCollapsed && isDesktop)" x-on:mouseleave="tooltip = false">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="tw-size-6 tw-shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                     </svg>
-            
+
                     <span x-show="!(sidebarCollapsed && isDesktop)"
                         x-bind:class="isInitialized ? 'tw-transition-all tw-ease-in-out tw-duration-300 tw-delay-100' : ''"
                         x-transition:enter="tw-transition-all tw-ease-in-out tw-duration-300 tw-delay-100"
@@ -354,8 +353,6 @@ $el._x_cleanup = () => {
                         {{ __('product') }}
                     </span>
                 </a>
-            
-            
 
                 <!-- Tooltip for collapsed state -->
                 <div x-show="tooltip" x-cloak
@@ -367,6 +364,44 @@ $el._x_cleanup = () => {
                     x-transition:leave-start="tw-opacity-100 tw-scale-100"
                     x-transition:leave-end="tw-opacity-0 tw-scale-95">
                     {{ __('product') }}
+                    <div
+                        class="tw-absolute tw-right-full tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-border-4 tw-border-transparent tw-border-r-gray-900">
+                    </div>
+                </div>
+            </div>
+            <!--Kategori Template -->
+            <div x-data="{ tooltip: false }" class="tw-relative">
+                <a href="{{ route('admin.kategori.kategori-template') }}" wire:navigate
+                    class="tw-flex tw-items-center tw-rounded-lg tw-gap-3 tw-px-4 tw-py-3 tw-text-sm tw-font-medium tw-transition-all tw-duration-200 tw-group {{ request()->routeIs('admin.kategori.kategori-template') ? 'tw-bg-blue-50 tw-text-blue-700 dark:tw-bg-blue-900 dark:tw-text-blue-300' : 'tw-text-gray-700 hover:tw-bg-gray-100 hover:tw-text-gray-900 dark:tw-text-gray-300 dark:hover:tw-bg-gray-700 dark:hover:tw-text-gray-100' }} focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
+                    x-on:mouseenter="tooltip = (sidebarCollapsed && isDesktop)" x-on:mouseleave="tooltip = false">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="tw-size-6 tw-shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+                    </svg>
+                    <span x-show="!(sidebarCollapsed && isDesktop)"
+                        x-bind:class="isInitialized ? 'tw-transition-all tw-ease-in-out tw-duration-300 tw-delay-100' : ''"
+                        x-transition:enter="tw-transition-all tw-ease-in-out tw-duration-300 tw-delay-100"
+                        x-transition:enter-start="tw-opacity-0 tw-translate-x-2"
+                        x-transition:enter-end="tw-opacity-100 tw-translate-x-0"
+                        x-transition:leave="tw-transition-all tw-ease-in-out tw-duration-200"
+                        x-transition:leave-start="tw-opacity-100 tw-translate-x-0"
+                        x-transition:leave-end="tw-opacity-0 tw-translate-x-2"
+                        class="tw-whitespace-nowrap tw-text-base tw-font-semibold tw-tracking-tight tw-text-gray-800 dark:tw-text-gray-200">
+                        {{ __('Kategori Template') }}
+                    </span>
+                </a>
+
+                <!-- Tooltip for collapsed state -->
+                <div x-show="tooltip" x-cloak
+                    class="tw-absolute tw-left-full tw-ml-2 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-bg-gray-900 tw-text-white tw-text-sm tw-px-2 tw-py-1 tw-rounded tw-shadow-lg tw-whitespace-nowrap tw-z-50"
+                    x-transition:enter="tw-transition tw-ease-out tw-duration-200"
+                    x-transition:enter-start="tw-opacity-0 tw-scale-95"
+                    x-transition:enter-end="tw-opacity-100 tw-scale-100"
+                    x-transition:leave="tw-transition tw-ease-in tw-duration-150"
+                    x-transition:leave-start="tw-opacity-100 tw-scale-100"
+                    x-transition:leave-end="tw-opacity-0 tw-scale-95">
+                    {{ __('Kategori Template') }}
                     <div
                         class="tw-absolute tw-right-full tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-border-4 tw-border-transparent tw-border-r-gray-900">
                     </div>

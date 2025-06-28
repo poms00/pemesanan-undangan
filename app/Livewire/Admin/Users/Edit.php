@@ -8,10 +8,36 @@ use Livewire\Attributes\On;
 
 class Edit extends Component
 {
-
     public $userId, $name, $email, $role, $password;
-    
 
+    // Validasi rules
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$this->userId}",
+            'role' => 'required|in:admin,user',
+            'password' => 'nullable|min:8',
+        ];
+    }
+
+    // Custom pesan error
+    protected $messages = [
+        'name.required' => 'Nama wajib diisi.',
+        'email.required' => 'Email wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'email.unique' => 'Email sudah terdaftar.',
+        'role.required' => 'Role wajib dipilih.',
+        'password.min' => 'Password minimal 8 karakter.',
+    ];
+
+    // Untuk real-time validation saat input berubah
+    public function updated($property)
+    {
+        $this->validateOnly($property);
+    }
+
+    // Event listener dari luar (biasanya tombol Edit ditekan)
     #[On('edit')]
     public function edit($id)
     {
@@ -24,45 +50,44 @@ class Edit extends Component
         $this->role   = $user->role;
         $this->password = '';
 
-        // Dispatch event untuk JS buka modal
-        $this->dispatch('EditModal');
+        // Buka modal via JS listener
+        $this->dispatch('EdituserModal');
     }
 
-
+    public function resetForm()
+    {
+        $this->reset(['name', 'email', 'password']);
+        $this->role = 'user';
+        $this->resetValidation();
+    }
 
     public function update()
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'email' => "required|email|unique:users,email,{$this->userId}",
-            'role' => 'required|in:admin,user',
-            'password' => 'nullable|min:8',
-        ]);
+        $this->validate();
 
         $user = User::findOrFail($this->userId);
         $user->name = $this->name;
         $user->email = $this->email;
         $user->role = $this->role;
 
-        if ($this->password) {
+        if (!empty($this->password)) {
             $user->password = bcrypt($this->password);
         }
 
         $user->save();
 
         $this->resetValidation();
-       
 
-        $this->dispatch('userUpdated', $this->userId);// refresh data user
+        // Notify komponen tabel user
+        $this->dispatch('userUpdated', $this->userId);
 
-        // Trigger SweetAlert
+        // Tampilkan notifikasi sukses
         $this->dispatch('toast:success', 'Berhasil Update data');
     }
 
-
-
     public function render()
     {
-        return view('livewire.admin.users.edit')->layout('components.layouts.admin.admin');
+        return view('livewire.admin.users.edit')
+            ->layout('components.layouts.admin.admin');
     }
 }

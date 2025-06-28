@@ -23,21 +23,45 @@
     <!-- Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-
     <!-- Livewire Styles -->
     @livewireStyles
+    <style>
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #9ca3af transparent;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #9ca3af; /* Tailwind gray-400 */
+        border-radius: 4px;
+      }
+      </style>
+      
    
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="h-screen overflow-hidden">
+    <div class="h-full flex flex-col">
 
-    <!-- Navigation -->
-    @livewire('layouts.user.navbar')
+        <!-- Sticky Navbar -->
+        <header class="sticky top-0 z-50 h-20">
+            @livewire('layouts.user.navbar')
+        </header>
 
-    <!-- Page Content -->
-    <main>
-        {{ $slot }}
-    </main>
+        <!-- Scrollable Main Content -->
+        <main class="flex-1 overflow-y-scroll p-2 bg-gray-50 custom-scrollbar">
+            
+                {{ $slot }}
+        </main>
+
+    </div>
+
 
 
     <!-- Livewire Scripts -->

@@ -725,9 +725,9 @@
                             Selanjutnya <i class="fas fa-arrow-right ms-2"></i>
                         </button>
                     @else
-                        <button type="submit" class="btn btn-success" wire:loading.attr="disabled"
-                            wire:target="submit">
-                            <span wire:loading.remove wire:target="submit">
+                        <button type="update" class="btn btn-success" wire:loading.attr="disabled"
+                            wire:target="update">
+                            <span wire:loading.remove wire:target="update">
                                 <i class="fas fa-save me-2"></i> Simpan Produk
                             </span>
                             <span wire:loading wire:target="update">

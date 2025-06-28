@@ -1,2 +1,4 @@
-*
-!.gitignore
+git rm -r --cached public/build
+git add -f public/build
+git commit -m "Add Vite build files (force)"
+git push origin main

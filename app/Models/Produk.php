@@ -16,7 +16,8 @@ class Produk extends Model
         'diskon',
         'thumbnail',
         'status',
-        'template',
+        'template',        // File yang di-hash
+        'nama_template',   // Nama asli file ZIP
     ];
 
     // Relasi ke kategori

@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->unsignedTinyInteger('diskon')->nullable(); // Ubah dari decimal ke tinyint
             $table->string('thumbnail')->nullable(); // Ubah dari gambar1
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
-            $table->string('template')->nullable(); // Tambahan untuk file ZIP opsional
+            $table->string('template')->nullable(); // Nama file hashed (ZIP)
+            $table->string('nama_template')->nullable(); // 🌟 Nama asli file ZIP
             $table->timestamps();
 
             // Relasi ke kategori_produk

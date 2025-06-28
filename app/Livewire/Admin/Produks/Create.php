@@ -6,6 +6,9 @@ use App\Models\Produk;
 use App\Models\KategoriProduk;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class Create extends Component
 {
@@ -15,7 +18,6 @@ class Create extends Component
     public $nama, $kategori_id, $harga, $diskon, $status;
     public $thumbnail;
     public $template; // Field for file/zip uploads (matches DB schema)
-
 
     // Wizard state
     public $currentStep = 1;
@@ -80,11 +82,233 @@ class Create extends Component
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
-
-       
     }
-  
-   
+
+    /**
+     * Method untuk mengekstrak ZIP file (tanpa menghapus ZIP asli)
+     */
+    private function extractZipFile($zipPath, $extractToPath)
+    {
+        try {
+            $zip = new ZipArchive;
+
+            // Buka file ZIP
+            if ($zip->open($zipPath) === TRUE) {
+                // Buat direktori tujuan jika belum ada
+                if (!Storage::disk('public')->exists($extractToPath)) {
+                    Storage::disk('public')->makeDirectory($extractToPath);
+                }
+
+                $fullExtractPath = storage_path('app/public/' . $extractToPath);
+
+                // Ekstrak semua file
+                $zip->extractTo($fullExtractPath);
+                $zip->close();
+
+                return [
+                    'success' => true,
+                    'message' => 'File ZIP berhasil diekstrak',
+                    'extracted_path' => $extractToPath
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Gagal membuka file ZIP'
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error saat ekstraksi: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Method untuk mendapatkan daftar file hasil ekstraksi
+     */
+    private function getExtractedFiles($extractPath)
+    {
+        try {
+            $files = [];
+            $fullPath = storage_path('app/public/' . $extractPath);
+
+            if (is_dir($fullPath)) {
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($fullPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                    \RecursiveIteratorIterator::SELF_FIRST
+                );
+
+                foreach ($iterator as $file) {
+                    if ($file->isFile()) {
+                        $relativePath = str_replace($fullPath . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                        $files[] = [
+                            'name' => $file->getFilename(),
+                            'path' => $relativePath,
+                            'size' => $file->getSize(),
+                            'extension' => $file->getExtension()
+                        ];
+                    }
+                }
+            }
+
+            return $files;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Method untuk memvalidasi konten ZIP
+     */
+    private function validateZipContent($zipPath)
+    {
+        try {
+            $zip = new ZipArchive;
+
+            if ($zip->open($zipPath) === TRUE) {
+                $fileCount = $zip->numFiles;
+                $files = [];
+                $hasValidFiles = false;
+
+                // Daftar ekstensi file yang diizinkan untuk template
+                $allowedExtensions = ['html', 'css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'txt', 'md'];
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    $filename = $zip->getNameIndex($i);
+                    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+                    $files[] = [
+                        'name' => $filename,
+                        'extension' => $extension
+                    ];
+
+                    if (in_array($extension, $allowedExtensions)) {
+                        $hasValidFiles = true;
+                    }
+                }
+
+                $zip->close();
+
+                return [
+                    'valid' => $hasValidFiles,
+                    'file_count' => $fileCount,
+                    'files' => $files,
+                    'message' => $hasValidFiles ? 'ZIP file valid' : 'ZIP tidak mengandung file template yang valid'
+                ];
+            } else {
+                return [
+                    'valid' => false,
+                    'message' => 'Gagal membaca file ZIP'
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'valid' => false,
+                'message' => 'Error validasi ZIP: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Method untuk menangani upload dan ekstraksi template (tetap menyimpan ZIP asli)
+     */
+    private function handleTemplateUpload($produkId)
+    {
+        if (!$this->template) {
+            return [
+                'success' => true,
+                'template_zip_path' => null,
+                'template_extracted_path' => null,
+                'nama_template' => null
+            ];
+        }
+
+        try {
+            // Generate nama unik untuk folder dan file
+            $uniqueId = $produkId . '_' . Str::random(8);
+            $zipFileName = 'template_' . $uniqueId . '.zip';
+            $extractFolderName = 'template_' . $uniqueId;
+
+            // Path untuk menyimpan ZIP asli dan folder ekstraksi
+            $zipPath = 'produks/templates/zips/' . $zipFileName;
+            $extractPath = 'produks/templates/extracted/' . $extractFolderName;
+
+            // Simpan file ZIP asli
+            $savedZipPath = $this->template->storeAs('produks/templates/zips', $zipFileName, 'public');
+            $fullZipPath = storage_path('app/public/' . $savedZipPath);
+
+            // Validasi konten ZIP
+            $validation = $this->validateZipContent($fullZipPath);
+            if (!$validation['valid']) {
+                // Hapus file ZIP jika tidak valid
+                Storage::disk('public')->delete($savedZipPath);
+
+                return [
+                    'success' => false,
+                    'message' => $validation['message']
+                ];
+            }
+
+            // Ekstrak ZIP ke folder terpisah
+            $extractResult = $this->extractZipFile($fullZipPath, $extractPath);
+
+            if ($extractResult['success']) {
+                // Dapatkan daftar file yang diekstrak
+                $extractedFiles = $this->getExtractedFiles($extractPath);
+
+                return [
+                    'success' => true,
+                    'template_zip_path' => $savedZipPath,
+                    'template_extracted_path' => $extractPath,
+                    'nama_template' => $this->template->getClientOriginalName(),
+                    'extracted_files' => $extractedFiles,
+                    'file_count' => count($extractedFiles),
+                    'message' => 'Template berhasil diupload dan diekstrak (' . count($extractedFiles) . ' files)'
+                ];
+            } else {
+                // Hapus file ZIP jika ekstraksi gagal
+                Storage::disk('public')->delete($savedZipPath);
+
+                return [
+                    'success' => false,
+                    'message' => $extractResult['message']
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error upload template: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Method untuk menghapus folder template dan ZIP
+     */
+    private function deleteTemplateFiles($zipPath, $extractedPath)
+    {
+        try {
+            $deleted = [];
+
+            // Hapus ZIP file
+            if ($zipPath && Storage::disk('public')->exists($zipPath)) {
+                Storage::disk('public')->delete($zipPath);
+                $deleted[] = 'ZIP file';
+            }
+
+            // Hapus folder ekstraksi
+            if ($extractedPath && Storage::disk('public')->exists($extractedPath)) {
+                Storage::disk('public')->deleteDirectory($extractedPath);
+                $deleted[] = 'extracted folder';
+            }
+
+            return count($deleted) > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     /**
      * Method untuk mendapatkan informasi diskon
      */
@@ -113,7 +337,6 @@ class Create extends Component
     public function setDiscountPreset($percentage)
     {
         $this->diskon = $percentage;
-      
         $this->validateOnly('diskon');
     }
 
@@ -123,7 +346,6 @@ class Create extends Component
     public function clearDiscount()
     {
         $this->diskon = 0;
-       
         $this->resetErrorBag('diskon');
     }
 
@@ -144,7 +366,6 @@ class Create extends Component
             // Reset error untuk field tersebut
             $this->resetErrorBag($field);
 
-            // Dispatch success toast
         } catch (\Exception $e) {
             // Handle error
             $this->dispatch('toast:error', 'Gagal menghapus file: ' . $e->getMessage());
@@ -285,33 +506,42 @@ class Create extends Component
                 'template' => 'nullable|file|mimes:zip,rar|max:10240',
             ]);
 
-
-            // Process file uploads
-            $fileData = [];
-
-            // Handle thumbnail upload
-            if ($this->thumbnail) {
-                $fileData['thumbnail'] = $this->thumbnail->store('produks/images', 'public');
-            } else {
-                $fileData['thumbnail'] = null;
-            }
-
-            // Handle template upload
-            if ($this->template) {
-                $fileData['template'] = $this->template->store('produks/templates', 'public');
-            } else {
-                $fileData['template'] = null;
-            }
-
-            // Create product
+            // Create product first to get ID
             $produk = Produk::create([
                 'nama' => $this->nama,
                 'kategori_id' => $this->kategori_id,
-                'harga' => $this->harga, // Simpan harga sebagai angka
-                'diskon' => $this->diskon ?: null, // Simpan diskon atau null jika 0
+                'harga' => $this->harga,
+                'diskon' => $this->diskon ?: null,
                 'status' => $this->status,
-                'thumbnail' => $fileData['thumbnail'],
-                'template' => $fileData['template'],
+                'thumbnail' => null, // Will be updated below
+                'template' => null, // Will be updated below (ZIP path)
+                'template_extracted' => null, // Will be updated below (extracted path)
+                'nama_template' => null, // Will be updated below
+            ]);
+
+            // Process thumbnail upload
+            $thumbnailPath = null;
+            if ($this->thumbnail) {
+                $thumbnailPath = $this->thumbnail->store('produks/images', 'public');
+            }
+
+            // Process template upload and extraction
+            $templateResult = $this->handleTemplateUpload($produk->id);
+
+            if (!$templateResult['success']) {
+                // Delete created product if template processing fails
+                $produk->delete();
+
+                $this->dispatch('toast:error', $templateResult['message']);
+                return;
+            }
+
+            // Update product with file paths
+            $produk->update([
+                'thumbnail' => $thumbnailPath,
+                'template' => $templateResult['template_zip_path'], // Path to original ZIP
+                'template_extracted' => $templateResult['template_extracted_path'], // Path to extracted folder  
+                'nama_template' => $templateResult['nama_template'],
             ]);
 
             // Reset form
@@ -328,12 +558,16 @@ class Create extends Component
             $this->currentStep = 1; // Reset to first step
             $this->resetErrorBag(); // Clear all errors
 
-
             // Dispatch events
             $this->dispatch('produksCreated', $produk->id);
-            $this->dispatch('toast:success', 'Produk berhasil ditambahkan');
 
-            // Redirect atau refresh jika diperlukan
+            if ($templateResult['template_zip_path']) {
+                $this->dispatch('toast:success', 'Produk berhasil ditambahkan');
+            } else {
+                $this->dispatch('toast:success', 'Produk berhasil ditambahkan');
+            }
+
+            // Redirect
             return redirect()->route('admin.produks.index');
         } catch (\Exception $e) {
             $this->dispatch('toast:error', 'Gagal menyimpan produk: ' . $e->getMessage());
@@ -361,7 +595,6 @@ class Create extends Component
 
     public function render()
     {
-
         return view('livewire.admin.produks.create', [
             'kategoriList' => KategoriProduk::orderBy('nama_kategori')->get(),
             'uploadedFilesCount' => $this->getUploadedFilesCount(),

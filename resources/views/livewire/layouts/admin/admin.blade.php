@@ -20,36 +20,43 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <!-- Livewire Styles -->
     @livewireStyles
     <style>
-  
-    /* Toast Horizontal Layout Styles */
-.toast-popup-pro {
-    /* Mengatur lebar otomatis dengan batas maksimal */
-    width: auto !important;
-    max-width: 90vw !important;
-    min-width: 300px !important;
-    
-    /* Mencegah text wrap dan memaksa satu baris */
-    white-space: nowrap !important;
-    
-    /* Shadow untuk depth */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
+        /* Toast Horizontal Layout Styles */
 
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #9ca3af transparent;
+        }
 
-</style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #9ca3af;
+            /* Tailwind gray-400 */
+            border-radius: 4px;
+        }
+    </style>
 
 </head>
 
 <body class="font-sans bg-light text-dark">
-    <div class="d-flex min-vh-100">
-        <!-- Sidebar Component -->
-        <livewire:layouts.admin.sidebar />
-        <!-- Main Content Area -->
-        <main class="flex-grow-1 py-4 px-3 overflow-auto" style="min-height: 100vh;">
+    <div class="d-flex vh-100 overflow-hidden">
+        <!-- Sidebar Component - Fixed -->
+        <div class="flex-shrink-0">
+            <livewire:layouts.admin.sidebar />
+        </div>
+
+        <!-- Main Content Area - Scrollable -->
+        <main class="flex-grow-1  px-3 overflow-scroll mt-20 custom-scrollbar">
             {{ $slot }}
         </main>
     </div>
@@ -104,9 +111,9 @@
             });
         });
         document.addEventListener("DOMContentLoaded", () => {
-            Livewire.on("toast:eror", (message) => {
+            Livewire.on("toast:error", (message) => { // ← DIPERBAIKI: "error"
                 Toast.fire({
-                    icon: "eror",
+                    icon: "error", // ← DIPERBAIKI: "error"
                     title: message,
                 });
             });
@@ -120,12 +127,20 @@
         });
 
         document.addEventListener('livewire:init', () => {
+            Livewire.on('EdituserModal', () => {
+                $('#editModal').modal('show'); // buka modal secara manual
+            });
+
             Livewire.on('userUpdated', () => {
                 $('#editModal').modal('hide');
             });
         });
 
         document.addEventListener('livewire:init', () => {
+            Livewire.on('openDeleteModal', () => {
+                $('#deleteModal').modal('show'); // buka modal secara manual
+            });
+
             Livewire.on('userDeleted', () => {
                 $('#deleteModal').modal('hide');
             });
@@ -134,13 +149,51 @@
 
         //produks-table
         document.addEventListener('livewire:init', () => {
+            Livewire.on('produksCreated', () => {
+                $('#createModal').modal('hide');
+            });
+        });
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('EditprodukModal', () => {
+                $('#editModal').modal('show'); // buka modal secara manual
+            });
+
             Livewire.on('produksUpdated', () => {
                 $('#editModal').modal('hide');
             });
         });
         document.addEventListener('livewire:init', () => {
-            Livewire.on('produksCreated', () => {
+            Livewire.on('openDeleteModal', () => {
+                $('#deleteModal').modal('show'); // buka modal secara manual
+            });
+
+            Livewire.on('produkDeleted', () => {
+                $('#deleteModal').modal('hide'); // tutup modal setelah delete
+            });
+        });
+        
+        //Kategori-template
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('kategoriCreated', () => {
                 $('#createModal').modal('hide');
+            });
+        });
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('EditKategoriModal', () => {
+                $('#editModal').modal('show'); // buka modal secara manual
+            });
+
+            Livewire.on('kategoriUpdated', () => {
+                $('#editModal').modal('hide');
+            });
+        });
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('openDeleteModal', () => {
+                $('#deleteModal').modal('show'); // buka modal secara manual
+            });
+
+            Livewire.on('kategoriDeleted', () => {
+                $('#deleteModal').modal('hide'); // tutup modal setelah delete
             });
         });
     </script>

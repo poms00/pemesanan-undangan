@@ -1,4 +1,4 @@
-<div class="tw-container tw-w-full tw-p-6 tw-space-y-6 tw-mt-10 tw-mx-auto">
+<div class="tw-container tw-w-full tw-p-6 tw-space-y-6 tw-mx-auto">
     <!-- Header Section -->
     <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; padding: 32px; color: white; box-shadow: 0 4px 25px rgba(30, 41, 59, 0.15); margin-bottom: 24px;">
         <div class="row align-items-center">
@@ -9,48 +9,49 @@
                 <p style="opacity: 0.8; margin: 0; font-size: 1rem; color: #cbd5e1;">Comprehensive template information
                     and preview</p>
             </div>
+        </div>
+    </div>
 
-            <!-- middle: Search -->
-            <div class="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0">
-                <div style="position: relative; display: flex; align-items: center; width: 400px;">
-                    <div
-                        style="position: absolute; left: 0.75rem; display: flex; align-items: center; pointer-events: none; z-index: 10;">
-                        <svg style="width: 0.95rem; height: 0.875rem; color: #64748b;"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    {{-- Search Bar --}}
+    <div class="mb-6">
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <div style="position: relative; flex: 1;">
+                <input type="text" placeholder="Search..."
+                    style="width: 100%; padding: 0.5rem 2rem 0.5rem 2rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: white; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.02em; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                    onFocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1), 0 5px 12px rgba(59, 130, 246, 0.1)'; this.style.transform='translateY(-1px)'"
+                    onBlur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 4px rgba(0, 0, 0, 0.05)'; this.style.transform='translateY(0)'"
+                    onInput="toggleClearButton(this)" wire:model.live="search" />
+
+                @if ($search)
+                    <button
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; color: #64748b; cursor: pointer; padding: 0.25rem; border-radius: 0.75rem; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
+                        onMouseEnter="this.style.background='linear-gradient(135deg, #e2e8f0, #cbd5e1)'; this.style.color='#475569'; this.style.transform='translateY(-50%) scale(1.05)'"
+                        onMouseLeave="this.style.background='linear-gradient(135deg, #f1f5f9, #e2e8f0)'; this.style.color='#64748b'; this.style.transform='translateY(-50%) scale(1)'"
+                        wire:click="$set('search', '')">
+                        <svg style="width: 0.75rem; height: 0.75rem;" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
                         </svg>
-                    </div>
-                    <input type="text" placeholder="Search..."
-                        style="width: 100%; padding: 0.5rem 2rem 0.5rem 2rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: white; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.02em; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
-                        onFocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1), 0 5px 12px rgba(59, 130, 246, 0.1)'; this.style.transform='translateY(-1px)'"
-                        onBlur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 4px rgba(0, 0, 0, 0.05)'; this.style.transform='translateY(0)'"
-                        onInput="toggleClearButton(this)" wire:model.live="search" />
-                    @if ($search)
-                        <button
-                            style="position: absolute; right: 0.5rem; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: none; color: #64748b; cursor: pointer; padding: 0.25rem; border-radius: 0.75rem; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
-                            onMouseEnter="this.style.background='linear-gradient(135deg, #e2e8f0, #cbd5e1)'; this.style.color='#475569'; this.style.transform='scale(1.05)'"
-                            onMouseLeave="this.style.background='linear-gradient(135deg, #f1f5f9, #e2e8f0)'; this.style.color='#64748b'; this.style.transform='scale(1)'"
-                            wire:click="$set('search', '')">
-                            <svg style="width: 0.75rem; height: 0.75rem;" xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
-                            </svg>
-                        </button>
-                    @endif
+                    </button>
+                @endif
+
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </div>
             </div>
 
-            <!-- Right: Button -->
-            <div class="col-12 col-md-4 d-flex justify-content-end">
-                <button data-bs-toggle="modal" data-bs-target="#createModal"
-                    class="tw-bg-slate-600 hover:tw-bg-slate-700 tw-text-white tw-font-medium tw-py-2 tw-px-4 tw-rounded-lg tw-shadow-sm hover:tw-shadow-md tw-transition-all tw-duration-150 tw-flex tw-items-center tw-space-x-2 tw-text-sm">
+            {{-- Create Button --}}
+            <div class="relative inline-block">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#createModal"
+                    style="padding: 0.5rem 2.5rem; background: linear-gradient(135deg, #475569, #64748b); color: white; border: none; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.02em; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); height: 2.5rem; white-space: nowrap;">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    <span>Create</span>
+                    Create
                 </button>
             </div>
         </div>
@@ -118,15 +119,15 @@
                                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59,130,246,0.2)'"
                                         title="Detail">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                                            stroke-width="1.5" stroke="currentColor"
+                                            style="width: 16px; height: 16px;">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
                                         </svg>
                                     </a>
 
 
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#editModal"
+                                    <button type="button" class="btn btn-primary" 
                                         wire:click="$dispatch('edit', {{ $produk }})"
                                         style="background: linear-gradient(135deg, #facc15 0%, #f97316 100%); border: none; color: white; padding: 0.625rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(59,130,246,0.2);"
                                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.4)'"
@@ -140,12 +141,11 @@
                                         </svg>
                                     </button>
 
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal" wire:click="confirmDelete({{ $produk->id }})"
+                                    <button type="button" class="btn btn-primary" wire:click="confirmDelete({{ $produk->id }})"
                                         style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 0.625rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(239,68,68,0.2);"
                                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(239,68,68,0.4)'"
                                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(239,68,68,0.2)'"
-                                        title="Delete User">
+                                        title="Delete">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor"
                                             style="width: 16px; height: 16px;">
@@ -197,8 +197,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Apakah Anda yakin ingin menghapus:
-                    {{ \App\Models\Produk::find($produkidBeingDeleted)?->nama ?? 'produk' }}
+                    Apakah Anda yakin ingin menghapus  <strong>{{ $namaProdukBeingDeleted ?? 'produk' }}</strong>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

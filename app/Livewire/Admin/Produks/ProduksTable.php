@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Produks;
 
 use Livewire\Component;
@@ -9,14 +10,18 @@ use Livewire\WithPagination;
 class ProduksTable extends Component
 {
     use WithPagination;
+
     public $search = '';
-    public $perPage = 5; // <--- ini menentukan jumlah data per halaman
+    public $perPage = 5;
+
+    public $produkidBeingDeleted; // ID produk yang akan dihapus
+    public $namaProdukBeingDeleted; // Nama produk yang akan dihapus
+
     protected $listeners = [
         'produksUpdated' => 'handleproduksUpdated',
         'produksCreated' => 'handleproduksCreated',
     ];
 
-    // Reset pagination setiap kali search berubah
     public function updatingSearch()
     {
         $this->resetPage();
@@ -26,47 +31,44 @@ class ProduksTable extends Component
     {
         $total = Produk::count();
         $lastPage = (int) ceil($total / $this->perPage);
-        $this->gotoPage($lastPage); // langsung ke halaman terakhir
+        $this->gotoPage($lastPage);
     }
-
 
     public function handleproduksUpdated($produksId)
     {
-        // Cari posisi user dengan id $userId berdasarkan urutan id ascending
         $position = Produk::where('id', '<=', $produksId)->count();
-
-        // Hitung halaman user tersebut
         $page = (int) ceil($position / $this->perPage);
-
-        // Arahkan ke halaman tersebut
         $this->gotoPage($page);
     }
-
-    public $produkidBeingDeleted; // tetap simpan ID
 
     public function confirmDelete($id)
     {
         $this->produkidBeingDeleted = $id;
-    }
 
+        $produk = Produk::find($id);
+        $this->namaProdukBeingDeleted = $produk ? $produk->nama : 'produk';
+
+        $this->dispatch('openDeleteModal');
+    }
 
     public function delete()
     {
-        produk::findOrFail($this->produkidBeingDeleted)->delete();
-        $this->dispatch('userDeleted');
-        // Trigger SweetAlert
+        Produk::findOrFail($this->produkidBeingDeleted)->delete();
+        $this->dispatch('produkDeleted');
         $this->dispatch('toast:success', 'Berhasil Hapus data');
-    }
 
+        // Kosongkan nilai setelah penghapusan
+        $this->produkidBeingDeleted = null;
+        $this->namaProdukBeingDeleted = null;
+    }
 
     public function render()
     {
         $produks = Produk::with('kategori')
             ->where('nama', 'like', '%' . $this->search . '%')
             ->orWhereHas('kategori', fn($q) => $q->where('nama_kategori', 'like', '%' . $this->search . '%'))
-            ->orderBy('id', 'asc') // urutkan dari ID kecil
+            ->orderBy('id', 'asc')
             ->paginate($this->perPage);
-
 
         return view('livewire.admin.produks.produks-table', [
             'produks' => $produks

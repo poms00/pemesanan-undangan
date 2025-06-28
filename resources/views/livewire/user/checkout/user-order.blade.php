@@ -140,8 +140,7 @@
                                     <img src="{{ asset('storage/' . $produk->thumbnail) }}" alt="{{ $produk->nama }}"
                                         class="w-20 h-20 rounded-lg object-cover border border-gray-200" />
                                 @else
-                                    <div
-                                        class="w-20 h-20 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-100">
+                                    <div class="w-20 h-20 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-100">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <rect x="3" y="4" width="18" height="16" rx="2"

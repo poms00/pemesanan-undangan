@@ -29,10 +29,7 @@ return new class extends Migration {
             $table->string('lokasi')->nullable();
             $table->string('nomor_telepon')->nullable();
 
-
-
             $table->enum('status_pemesanan', ['pending', 'diproses', 'selesai'])->default('pending');
-
             $table->string('link_undangan')->nullable();
 
             $table->timestamps();

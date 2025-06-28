@@ -8,6 +8,8 @@ use App\Models\KategoriProduk;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class Detail extends Component
 {
@@ -353,7 +355,7 @@ class Detail extends Component
             $this->editModeInformasi = false;
 
             $this->dispatch('produksUpdated', $this->produkId);
-            $this->dispatch('toast:success', 'Informasi berhasil diperbarui');
+            $this->dispatch('toast:success', 'berhasil diperbarui');
         } catch (\Exception $e) {
             $this->dispatch('toast:error', 'Gagal memperbarui informasi: ' . $e->getMessage());
         }
@@ -407,8 +409,336 @@ class Detail extends Component
         }
     }
 
+
+
+    private function handleTemplateUpload($produkId, $existingProduk = null)
+    {
+        if (!$this->template) {
+            return [
+                'success' => true,
+                'template_zip_path' => null,
+                'template_extracted_path' => null,
+                'nama_template' => null
+            ];
+        }
+
+        try {
+            // Generate nama unik untuk folder dan file
+            $uniqueId = $produkId . '_' . Str::random(8);
+            $zipFileName = 'template_' . $uniqueId . '.zip';
+            $extractFolderName = 'template_' . $uniqueId;
+
+            // Path untuk menyimpan ZIP baru dan folder ekstraksi
+            $zipPath = 'produks/templates/zips/' . $zipFileName;
+            $extractPath = 'produks/templates/extracted/' . $extractFolderName;
+
+            // Simpan file ZIP baru
+            $savedZipPath = $this->template->storeAs('produks/templates/zips', $zipFileName, 'public');
+            $fullZipPath = storage_path('app/public/' . $savedZipPath);
+
+            // Validasi konten ZIP
+            $validation = $this->validateZipContent($fullZipPath);
+            if (!$validation['valid']) {
+                // Hapus file ZIP jika tidak valid
+                Storage::disk('public')->delete($savedZipPath);
+
+                return [
+                    'success' => false,
+                    'message' => $validation['message']
+                ];
+            }
+
+            // Ekstrak ZIP ke folder terpisah
+            $extractResult = $this->extractZipFile($fullZipPath, $extractPath);
+
+            if ($extractResult['success']) {
+                // Hapus file template lama SETELAH ekstraksi berhasil
+                if ($existingProduk) {
+                    $deleteResult = $this->deleteOldTemplateFiles($existingProduk);
+                    // Log hasil penghapusan file lama (optional)
+                }
+
+                // Dapatkan daftar file yang diekstrak
+                $extractedFiles = $this->getExtractedFiles($extractPath);
+
+                return [
+                    'success' => true,
+                    'template_zip_path' => $savedZipPath,
+                    'template_extracted_path' => $extractPath,
+                    'nama_template' => $this->template->getClientOriginalName(),
+                    'extracted_files' => $extractedFiles,
+                    'file_count' => count($extractedFiles),
+                    'message' => 'Template berhasil diupload dan diekstrak (' . count($extractedFiles) . ' files)'
+                ];
+            } else {
+                // Hapus file ZIP jika ekstraksi gagal
+                Storage::disk('public')->delete($savedZipPath);
+
+                return [
+                    'success' => false,
+                    'message' => $extractResult['message']
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error upload template: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+
+
+
+
+
     /**
-     * Update template
+     * Method untuk menghapus file template lama (ZIP dan folder ekstraksi)
+     */
+    private function deleteOldTemplateFiles($produk)
+    {
+        try {
+            $deleted = [];
+
+            // Hapus ZIP file lama
+            if ($produk->template && Storage::disk('public')->exists($produk->template)) {
+                Storage::disk('public')->delete($produk->template);
+                $deleted[] = 'ZIP file lama';
+            }
+
+            // Hapus folder ekstraksi lama
+            if ($produk->template_extracted && Storage::disk('public')->exists($produk->template_extracted)) {
+                Storage::disk('public')->deleteDirectory($produk->template_extracted);
+                $deleted[] = 'folder ekstraksi lama';
+            }
+
+            return [
+                'success' => true,
+                'deleted' => $deleted,
+                'message' => 'File template lama berhasil dihapus: ' . implode(', ', $deleted)
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error menghapus file lama: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+    /**
+     * Method untuk memvalidasi konten ZIP
+     */
+    private function validateZipContent($zipPath)
+    {
+        try {
+            $zip = new ZipArchive;
+
+            if ($zip->open($zipPath) === TRUE) {
+                $fileCount = $zip->numFiles;
+                $files = [];
+                $hasValidFiles = false;
+
+                // Daftar ekstensi file yang diizinkan untuk template
+                $allowedExtensions = ['html', 'css', 'js', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'txt', 'md'];
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    $filename = $zip->getNameIndex($i);
+                    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+                    $files[] = [
+                        'name' => $filename,
+                        'extension' => $extension
+                    ];
+
+                    if (in_array($extension, $allowedExtensions)) {
+                        $hasValidFiles = true;
+                    }
+                }
+
+                $zip->close();
+
+                return [
+                    'valid' => $hasValidFiles,
+                    'file_count' => $fileCount,
+                    'files' => $files,
+                    'message' => $hasValidFiles ? 'ZIP file valid' : 'ZIP tidak mengandung file template yang valid'
+                ];
+            } else {
+                return [
+                    'valid' => false,
+                    'message' => 'Gagal membaca file ZIP'
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'valid' => false,
+                'message' => 'Error validasi ZIP: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+
+    /**
+     * Method untuk mendapatkan daftar file hasil ekstraksi
+     */
+    private function getExtractedFiles($extractPath)
+    {
+        try {
+            $files = [];
+            $fullPath = storage_path('app/public/' . $extractPath);
+
+            if (is_dir($fullPath)) {
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($fullPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                    \RecursiveIteratorIterator::SELF_FIRST
+                );
+
+                foreach ($iterator as $file) {
+                    if ($file->isFile()) {
+                        $relativePath = str_replace($fullPath . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                        $files[] = [
+                            'name' => $file->getFilename(),
+                            'path' => $relativePath,
+                            'size' => $file->getSize(),
+                            'extension' => $file->getExtension()
+                        ];
+                    }
+                }
+            }
+
+            return $files;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+
+
+    /**
+     * Method untuk mengekstrak ZIP file (sama seperti di Create.php)
+     */
+    private function extractZipFile($zipPath, $extractToPath)
+    {
+        try {
+            $zip = new ZipArchive;
+
+            // Buka file ZIP
+            if ($zip->open($zipPath) === TRUE) {
+                // Buat direktori tujuan jika belum ada
+                if (!Storage::disk('public')->exists($extractToPath)) {
+                    Storage::disk('public')->makeDirectory($extractToPath);
+                }
+
+                $fullExtractPath = storage_path('app/public/' . $extractToPath);
+
+                // Ekstrak semua file
+                $zip->extractTo($fullExtractPath);
+                $zip->close();
+
+                return [
+                    'success' => true,
+                    'message' => 'File ZIP berhasil diekstrak',
+                    'extracted_path' => $extractToPath
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Gagal membuka file ZIP'
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error saat ekstraksi: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+    /**
+     * Method untuk menghapus template secara permanen (untuk tombol hapus)
+     */
+    public function deleteTemplate()
+    {
+        try {
+            $produk = Produk::findOrFail($this->produkId);
+
+            // Hapus file template lama
+            $deleteResult = $this->deleteOldTemplateFiles($produk);
+
+            // Update database
+            $produk->update([
+                'template' => null,
+                'template_extracted' => null,
+                'nama_template' => null,
+            ]);
+
+            // Reset properties
+            $this->existingTemplate = null;
+            $this->template = null;
+
+            // Refresh data
+            $this->refreshProdukData();
+            $this->backupOriginalData();
+
+            $this->dispatch('produksUpdated', $this->produkId);
+        } catch (\Exception $e) {
+            $this->dispatch('toast:error', 'Gagal menghapus template: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Method untuk mendapatkan informasi template yang lebih detail
+     */
+    public function getDetailedTemplateInfo()
+    {
+        $produk = Produk::find($this->produkId);
+
+        if (!$produk) {
+            return null;
+        }
+
+        $info = [];
+
+        // Info template ZIP
+        if ($produk->template && Storage::disk('public')->exists($produk->template)) {
+            $info['zip'] = [
+                'path' => $produk->template,
+                'name' => $produk->nama_template ?: basename($produk->template),
+                'size' => $this->formatFileSize(Storage::disk('public')->size($produk->template)),
+                'url' => Storage::disk('public')->url($produk->template),
+                'exists' => true
+            ];
+        } else {
+            $info['zip'] = ['exists' => false];
+        }
+
+        // Info template extracted
+        if ($produk->template_extracted && Storage::disk('public')->exists($produk->template_extracted)) {
+            $extractedFiles = $this->getExtractedFiles($produk->template_extracted);
+
+            $info['extracted'] = [
+                'path' => $produk->template_extracted,
+                'file_count' => count($extractedFiles),
+                'files' => $extractedFiles,
+                'exists' => true
+            ];
+        } else {
+            $info['extracted'] = ['exists' => false];
+        }
+
+        return $info;
+    }
+
+
+
+
+    /**
+     * Update template (PERBAIKAN)
      */
     public function updateTemplate()
     {
@@ -418,27 +748,41 @@ class Detail extends Component
             ]);
 
             $produk = Produk::findOrFail($this->produkId);
-            $originalTemplate = $produk->template;
 
             if ($this->template) {
-                // Delete old template if exists
-                if ($originalTemplate && Storage::disk('public')->exists($originalTemplate)) {
-                    Storage::disk('public')->delete($originalTemplate);
+                // Proses upload dan ekstraksi template baru
+                $templateResult = $this->handleTemplateUpload($produk->id, $produk);
+
+                if (!$templateResult['success']) {
+                    $this->dispatch('toast:error', $templateResult['message']);
+                    return;
                 }
 
-                // Store new template
-                $templatePath = $this->template->store('produks/templates', 'public');
-                $produk->update(['template' => $templatePath]);
-                $this->existingTemplate = $templatePath;
+                // Update produk dengan path template baru
+                $produk->update([
+                    'template' => $templateResult['template_zip_path'],
+                    'template_extracted' => $templateResult['template_extracted_path'],
+                    'nama_template' => $templateResult['nama_template'],
+                ]);
+
+                $this->existingTemplate = $templateResult['template_zip_path'];
                 $this->reset(['template']);
 
-                $this->dispatch('toast:success', 'Template berhasil diperbarui');
-            } elseif ($this->existingTemplate === null && $originalTemplate !== null) {
-                // Remove template
-                if (Storage::disk('public')->exists($originalTemplate)) {
-                    Storage::disk('public')->delete($originalTemplate);
-                }
-                $produk->update(['template' => null]);
+                $this->dispatch(
+                    'toast:success',
+                    'Template berhasil diperbarui dan diekstrak (' .
+                        ($templateResult['file_count'] ?? 0) . ' files)'
+                );
+            } elseif ($this->existingTemplate === null && $produk->template !== null) {
+                // Hapus template yang ada
+                $deleteResult = $this->deleteOldTemplateFiles($produk);
+
+                $produk->update([
+                    'template' => null,
+                    'template_extracted' => null,
+                    'nama_template' => null,
+                ]);
+
                 $this->existingTemplate = null;
 
                 $this->dispatch('toast:success', 'Template berhasil dihapus');
@@ -461,25 +805,25 @@ class Detail extends Component
     public function removeThumbnailFile()
     {
         $this->thumbnail = null;
-        $this->dispatch('toast:success', 'Thumbnail berhasil dihapus');
+      
     }
 
     public function removeExistingThumbnail()
     {
         $this->existingThumbnail = null;
-        $this->dispatch('toast:success', 'Thumbnail berhasil dihapus');
+ 
     }
 
     public function removeTemplateFile()
     {
         $this->template = null;
-        $this->dispatch('toast:success', 'Template berhasil dihapus');
+    
     }
 
     public function removeExistingTemplate()
     {
         $this->existingTemplate = null;
-        $this->dispatch('toast:success', 'Template berhasil dihapus');
+       
     }
 
     /**
@@ -671,6 +1015,6 @@ class Detail extends Component
             'thumbnailUrl' => $this->getThumbnailUrl(),
             'hasThumbnail' => $this->hasThumbnail(),
             'thumbnailInfo' => $this->getThumbnailInfo(),
-        ])->layout('components.layouts.admin.admin');
+        ])->layout('livewire.layouts.admin.admin');
     }
 }

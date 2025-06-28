@@ -4,6 +4,7 @@ namespace App\Livewire\Layouts\User;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use App\Models\KategoriProduk;
 
 class Navbar extends Component
 {
@@ -13,14 +14,13 @@ class Navbar extends Component
 
     public function mount()
     {
-        // Set current route based on current request
         $this->currentRoute = request()->route()->getName() ?? 'dashboard';
     }
 
     public function setCurrentRoute($route)
     {
         $this->currentRoute = $route;
-        $this->mobileMenuOpen = false; // Close mobile menu when navigating
+        $this->mobileMenuOpen = false;
     }
 
     public function toggleMobileMenu()
@@ -44,6 +44,10 @@ class Navbar extends Component
 
     public function render()
     {
-        return view('livewire.layouts.user.navbar');
+        $kategoriProduks = KategoriProduk::orderBy('nama_kategori')->get();
+
+        return view('livewire.layouts.user.navbar', [
+            'kategoris' => KategoriProduk::all(),
+        ]);
     }
 }

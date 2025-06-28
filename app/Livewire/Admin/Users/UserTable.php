@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Users;
 
 use Livewire\Component;
@@ -9,10 +10,10 @@ class UserTable extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = 'tailwind';
     public int $perPage = 5;
     public string $search = '';
     protected $updatesQueryString = ['search', 'perPage'];
+    public ?User $userBeingDeleted = null;
 
     protected $listeners = [
         'userCreated' => 'handleUserCreated',
@@ -45,7 +46,6 @@ class UserTable extends Component
         $this->gotoPage($page);
     }
 
-    
 
     public function handleUserCreated()
     {
@@ -60,15 +60,22 @@ class UserTable extends Component
     public function confirmUserDeletion($id)
     {
         $this->userIdBeingDeleted = $id;
+        $this->userBeingDeleted = User::find($id);
+        $this->dispatch('openDeleteModal');
     }
+
 
     public function deleteUser()
     {
         User::findOrFail($this->userIdBeingDeleted)->delete();
+
+        $this->userIdBeingDeleted = null;
+        $this->userBeingDeleted = null;
+
         $this->dispatch('userDeleted');
-        // Trigger SweetAlert
         $this->dispatch('toast:success', 'Berhasil Hapus data');
     }
+
 
     public function render()
     {

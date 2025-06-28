@@ -1,9 +1,7 @@
-<div class="tw-container tw-w-full tw-p-6 tw-space-y-6 tw-mt-10 tw-mx-auto">
-
+<div class="tw-container tw-w-full tw-p-6 tw-space-y-6 tw-mx-auto">
 
     <!-- Header Section -->
-    <div
-        style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; padding: 32px; color: white; box-shadow: 0 4px 25px rgba(30, 41, 59, 0.15); margin-bottom: 24px;">
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; padding: 32px; color: white; box-shadow: 0 4px 25px rgba(30, 41, 59, 0.15); margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
             <div>
                 <h1 style="font-size: 1.875rem; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -0.025em;">Template
@@ -357,8 +355,7 @@
 
         <form wire:submit.prevent="updateInformasi" enctype="multipart/form-data">
             <!-- Right Column - Information -->
-            <div
-                style="background: white; border-radius: 12px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+            <div style="background: white; border-radius: 12px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"
@@ -678,16 +675,15 @@
     </div>
 
 
+
+
     <!-- Template File Section -->
     <form wire:submit.prevent="updateTemplate" enctype="multipart/form-data">
-        <div class="template-package-container"
-            style="background: white;  border-radius: 12px;  padding: 24px;  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);  border: 1px solid #e2e8f0;">
+        <div class="template-package-container" style="background: white;  border-radius: 12px;  padding: 24px;  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);  border: 1px solid #e2e8f0;">
 
             <!-- Header Section -->
-            <div class="template-header d-flex align-items-center justify-content-between"
-                style="margin-bottom: 32px;">
+            <div class="template-header d-flex align-items-center justify-content-between" style="margin-bottom: 32px;">
 
-                <!-- Left Section: Icon + Title -->
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -747,9 +743,8 @@
                             onmouseover="this.style.background='#1d4ed8'; this.style.borderColor='#1d4ed8'"
                             onmouseout="this.style.background='#3b82f6'; this.style.borderColor='#3b82f6'"
                             title="Edit Template">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
@@ -761,46 +756,38 @@
 
             <!-- Upload Container -->
             <div class="upload-container"
-                @if ($editModeTemplate ?? false) onclick="document.getElementById('template').click()"
-                        style="height: 140px;
-                            {{ $template || $existingTemplate
-                                ? 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px solid #cbd5e1;'
-                                : 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px dashed #94a3b8;' }}
-                            border-radius: 12px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            cursor: pointer;
-                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);"
-                        onmouseover="this.style.borderColor='#2563eb'; 
-                                    this.style.background='linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
-                                    this.style.transform='translateY(-2px)';
-                                    this.style.boxShadow='0 10px 25px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)';"
-                        onmouseout="this.style.borderColor='{{ $template || $existingTemplate ? '#cbd5e1' : '#94a3b8' }}';
-                                    this.style.background='linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                                    this.style.transform='translateY(0)';
-                                    this.style.boxShadow='0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06)';"
-                    @else
-                        style="height: 140px;
-                            {{ $template || $existingTemplate
-                                ? 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1;'
-                                : 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1;' }}
-                            border-radius: 12px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);" @endif>
+                @if ($editModeTemplate ?? false) onclick="document.getElementById('template').click()" @endif
+                style="height: 140px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    {{ $template || $existingTemplate
+        ? 'border: 2px solid #cbd5e1;'
+        : ($editModeTemplate ?? false
+            ? 'border: 2px dashed #94a3b8;'
+            : 'border: 2px solid #e2e8f0;') }}
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    {{ $editModeTemplate ?? false ? 'cursor: pointer;' : '' }}
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);"
+                @if ($editModeTemplate ?? false) onmouseover="this.style.borderColor='#2563eb'; 
+                this.style.background='linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
+                this.style.transform='translateY(-2px)';
+                this.style.boxShadow='0 10px 25px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)';"
+    onmouseout="this.style.borderColor='{{ $template || $existingTemplate ? '#cbd5e1' : ($editModeTemplate ?? false ? '#94a3b8' : '#e2e8f0') }}';
+                this.style.background='linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                this.style.transform='translateY(0)';
+                this.style.boxShadow='0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06)';" @endif>
 
                 <!-- Loading State -->
                 <div wire:loading wire:target="template, removeTemplateFile, removeExistingTemplate"
                     wire:loading.class.remove="d-none" wire:loading.class="d-flex"
                     class="loading-overlay d-none position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
                     style="z-index: 30; 
-                                background: rgba(255, 255, 255, 0.95); 
-                                border-radius: 12px; 
-                                backdrop-filter: blur(2px);">
+        background: rgba(255, 255, 255, 0.95); 
+        border-radius: 12px; 
+        backdrop-filter: blur(2px);">
                     <div class="text-center">
                         <div class="spinner-border mb-2" role="status"
                             style="width: 2rem; height: 2rem; color: #6b7280;">
@@ -808,8 +795,8 @@
                         </div>
                         <div class="loading-text"
                             style="font-size: 0.875rem; 
-                                        font-weight: 500; 
-                                        color: #4b5563;">
+                font-weight: 500; 
+                color: #4b5563;">
                             <span wire:loading wire:target="template">Mengupload template...</span>
                             <span wire:loading wire:target="removeTemplateFile">Menghapus template...</span>
                             <span wire:loading wire:target="removeExistingTemplate">Menghapus template...</span>
@@ -821,9 +808,9 @@
                 @error('template')
                     <div class="error-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
                         style="background: #fef2f2; 
-                                    border: 2px solid #fca5a5; 
-                                    border-radius: 12px; 
-                                    z-index: 25;">
+            border: 2px solid #fca5a5; 
+            border-radius: 12px; 
+            z-index: 25;">
                         <div class="d-flex align-items-center gap-4 px-4">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444"
                                 stroke-width="2" class="flex-shrink-0">
@@ -834,14 +821,14 @@
                             <div class="d-flex flex-column">
                                 <div class="error-message"
                                     style="font-size: 0.875rem; 
-                                                color: #dc2626; 
-                                                font-weight: 500; 
-                                                margin-bottom: 2px;">
+                        color: #dc2626; 
+                        font-weight: 500; 
+                        margin-bottom: 2px;">
                                     {{ $message }}
                                 </div>
                                 <div class="error-hint"
                                     style="font-size: 0.75rem; 
-                                                color: #6b7280;">
+                        color: #6b7280;">
                                     Klik untuk mencoba lagi
                                 </div>
                             </div>
@@ -850,17 +837,18 @@
                 @enderror
 
                 <!-- Content -->
-                <div wire:loading.remove wire:target="template">
+                <div wire:loading.remove wire:target="template"
+                    class="w-100 h-100 d-flex align-items-center justify-content-center">
                     @if (!$template && !$existingTemplate)
                         @if ($editModeTemplate ?? false)
                             <!-- Upload State -->
-                            <div class="upload-prompt d-flex align-items-center gap-6 px-6">
+                            <div class="upload-prompt d-flex align-items-center gap-4 px-4">
                                 <div class="upload-icon flex-shrink-0 d-flex align-items-center justify-content-center"
                                     style="width: 64px; 
-                                                height: 64px; 
-                                                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
-                                                border-radius: 16px; 
-                                                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);">
+                        height: 64px; 
+                        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+                        border-radius: 16px; 
+                        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
                                         stroke="white" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round">
@@ -871,36 +859,36 @@
                                 </div>
                                 <div class="upload-content flex-1 text-start">
                                     <div class="upload-title"
-                                        style="font-size: 1.25rem; 
-                                                    font-weight: 600; 
-                                                    color: #1f2937; 
-                                                    margin-bottom: 8px; 
-                                                    line-height: 1.3;">
+                                        style="font-size: 1.125rem; 
+                            font-weight: 600; 
+                            color: #1f2937; 
+                            margin-bottom: 6px; 
+                            line-height: 1.3;">
                                         Klik untuk upload template
                                     </div>
                                     <div class="upload-description"
-                                        style="font-size: 0.9rem; 
-                                                    color: #6b7280; 
-                                                    line-height: 1.4; 
-                                                    margin-bottom: 6px;">
+                                        style="font-size: 0.875rem; 
+                            color: #6b7280; 
+                            line-height: 1.4; 
+                            margin-bottom: 4px;">
                                         Drag & drop atau klik untuk memilih file template
                                     </div>
                                     <div class="upload-specs"
-                                        style="font-size: 0.8rem; 
-                                                    color: #9ca3af;">
+                                        style="font-size: 0.75rem; 
+                            color: #9ca3af;">
                                         Format: ZIP, RAR • Maksimal 10MB
                                     </div>
                                 </div>
                             </div>
                         @else
                             <!-- Empty State -->
-                            <div class="empty-state d-flex align-items-center gap-6 px-6">
+                            <div class="empty-state d-flex align-items-center gap-4 px-4">
                                 <div class="empty-icon flex-shrink-0 d-flex align-items-center justify-content-center"
                                     style="width: 64px; 
-                                                height: 64px; 
-                                                background: #f1f5f9; 
-                                                border-radius: 16px; 
-                                                border: 2px solid #e2e8f0;">
+                        height: 64px; 
+                        background: #f1f5f9; 
+                        border-radius: 16px; 
+                        border: 2px solid #e2e8f0;">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
                                         stroke="#64748b" stroke-width="1.5" stroke-linecap="round"
                                         stroke-linejoin="round">
@@ -913,23 +901,23 @@
                                 </div>
                                 <div class="empty-content flex-1 text-start">
                                     <div class="empty-title"
-                                        style="font-size: 1.25rem; 
-                                                    font-weight: 600; 
-                                                    color: #1f2937; 
-                                                    margin-bottom: 8px; 
-                                                    line-height: 1.3;">
+                                        style="font-size: 1.125rem; 
+                            font-weight: 600; 
+                            color: #1f2937; 
+                            margin-bottom: 6px; 
+                            line-height: 1.3;">
                                         Belum ada template
                                     </div>
                                     <div class="empty-description"
-                                        style="font-size: 0.9rem; 
-                                                    color: #6b7280; 
-                                                    line-height: 1.4; 
-                                                    margin-bottom: 6px;">
+                                        style="font-size: 0.875rem; 
+                            color: #6b7280; 
+                            line-height: 1.4; 
+                            margin-bottom: 4px;">
                                         Template yang Anda upload akan ditampilkan di sini
                                     </div>
                                     <div class="empty-hint"
-                                        style="font-size: 0.8rem; 
-                                                    color: #9ca3af;">
+                                        style="font-size: 0.75rem; 
+                            color: #9ca3af;">
                                         Klik tombol "Edit" untuk mengelola template
                                     </div>
                                 </div>
@@ -937,24 +925,28 @@
                         @endif
                     @else
                         <!-- File Preview -->
-                        <div class="file-preview"
-                            style="display: flex !important;
-                            align-items: center !important;
-                            justify-content: space-between !important;
-                            width: 100% !important;
-                            padding: 20px 24px !important;
-                            height: 140px !important;
-                            box-sizing: border-box !important;
-                            column-gap: 32px !important;">
+                        <div
+                            class="file-preview w-100 h-100 d-flex align-items-center justify-content-between px-4 position-relative">
+
+                            <!-- Hover Overlay (Edit Mode) -->
+                            @if ($editModeTemplate ?? false)
+                                <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                                    style="background: linear-gradient(135deg, rgba(55, 65, 81, 0.9), rgba(75, 85, 99, 0.9)); 
+                    opacity: 0; 
+                    transition: opacity 0.3s ease; 
+                    border-radius: 10px;
+                    z-index: 10;"
+                                    onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0';">
+                                    <div class="text-white text-center">
+                                        <div style="font-size: 0.875rem; font-weight: 500;">
+                                            Klik untuk mengubah file
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                             <!-- Left Section: File Icon & Info -->
-                            <div class="file-section"
-                                style="display: flex !important;
-                                align-items: center !important;
-                                flex: 1 1 auto !important;
-                                min-width: 0 !important;
-                                overflow: hidden !important;
-                                gap: 20px !important;">
+                            <div class="file-section d-flex align-items-center gap-4 flex-1" style="min-width: 0;">
                                 @php
                                     $extension = '';
                                     if ($templateInfo) {
@@ -963,17 +955,12 @@
                                 @endphp
 
                                 <!-- File Icon -->
-                                <div class="file-icon"
-                                    style="display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    background: linear-gradient(135deg, #f59e0b, #d97706); 
-                                    border-radius: 16px; 
-                                    width: 64px; 
-                                    height: 64px; 
-                                    min-width: 64px;
-                                    flex-shrink: 0;
-                                    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);">
+                                <div class="file-icon d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 64px; 
+                        height: 64px; 
+                        background: linear-gradient(135deg, #f59e0b, #d97706); 
+                        border-radius: 16px; 
+                        box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
                                         stroke="white" stroke-width="1.5">
                                         <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -982,39 +969,27 @@
 
                                 <!-- File Info -->
                                 @if ($templateInfo)
-                                    <div class="file-info"
-                                        style="flex: 1 !important;
-                                        min-width: 0 !important;
-                                        overflow: hidden !important;">
+                                    <div class="file-info flex-1" style="min-width: 0;">
                                         <div class="file-name"
-                                            style="font-size: 1.125rem; 
-                                            font-weight: 600; 
-                                            color: #374151; 
-                                            margin-bottom: 8px;
-                                            line-height: 1.4;
-                                            overflow: hidden !important;
-                                            text-overflow: ellipsis !important;
-                                            white-space: nowrap !important;">
-                                            {{ Str::limit($templateInfo['name'], 35) }}
+                                            style="font-size: 1rem; 
+                                font-weight: 600; 
+                                margin-bottom: 4px; 
+                                color: #374151; 
+                                text-overflow: ellipsis; 
+                                overflow: hidden; 
+                                white-space: nowrap;"
+                                            title="{{ $templateInfo['name'] }}">
+                                            {{ $templateInfo['name'] }}
                                         </div>
                                         <div class="file-meta"
-                                            style="font-size: 0.875rem; 
-                                            color: #6b7280;
-                                            line-height: 1.3;
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 8px;
-                                            flex-wrap: wrap;">
-                                            <span>{{ $templateInfo['size'] }}</span>
-                                            <span style="color: #d1d5db;">•</span>
-                                            <span>{{ strtoupper($templateInfo['extension']) }}</span>
-
+                                            style="font-size: 0.8rem; 
+                                color: #6b7280;">
+                                            {{ $templateInfo['size'] }} • {{ strtoupper($templateInfo['extension']) }}
                                             @if ($templateInfo['type'] == 'existing')
-                                                <span style="color: #d1d5db;">•</span>
-                                                <span style="color: #10b981; font-weight: 500;">Tersimpan</span>
-                                            @elseif ($templateInfo['type'] == 'new' || $template)
-                                                <span style="color: #d1d5db;">•</span>
-                                                <span style="color: #f59e0b; font-weight: 500;">Baru diupload</span>
+                                                <span style="color: #10b981; font-weight: 500;"> • File
+                                                    Tersimpan</span>
+                                            @else
+                                                <span style="color: #3b82f6; font-weight: 500;"> • Baru Diupload</span>
                                             @endif
                                         </div>
                                     </div>
@@ -1022,44 +997,23 @@
                             </div>
 
                             <!-- Right Section: Action Buttons -->
-                            <div class="action-section"
-                                style="display: flex !important;
-                                align-items: center !important;
-                                gap: 12px !important;
-                                flex-shrink: 0 !important;
-                                min-width: fit-content !important;">
-
-                                <!-- Hover Overlay (Edit Mode) -->
-                                @if ($editModeTemplate ?? false)
-                                    <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                                        style="background: linear-gradient(135deg, rgba(55, 65, 81, 0.9), rgba(75, 85, 99, 0.9)); 
-                                        opacity: 0; 
-                                        transition: opacity 0.3s ease; 
-                                        border-radius: 10px;"
-                                        onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0';">
-                                        <div class="text-white text-center">
-                                            <div style="font-size: 0.875rem; font-weight: 500;">
-                                                Klik untuk mengubah file
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
+                            <div class="action-section d-flex align-items-center gap-3 flex-shrink-0">
                                 <!-- Preview Button -->
                                 @if (!($editModeTemplate ?? false))
                                     <button type="button"
                                         style="background: #10b981; 
-                                        color: white; 
-                                        border: none; 
-                                        padding: 10px 18px; 
-                                        border-radius: 8px; 
-                                        font-weight: 500; 
-                                        transition: all 0.2s ease; 
-                                        cursor: pointer; 
-                                        display: flex; 
-                                        align-items: center; 
-                                        gap: 8px;
-                                        white-space: nowrap;"
+                        color: white; 
+                        border: none; 
+                        padding: 10px 16px; 
+                        border-radius: 8px; 
+                        font-size: 0.875rem;
+                        font-weight: 500; 
+                        transition: all 0.2s ease; 
+                        cursor: pointer; 
+                        display: flex; 
+                        align-items: center; 
+                        gap: 8px;
+                        white-space: nowrap;"
                                         onmouseover="this.style.background='#059669'"
                                         onmouseout="this.style.background='#10b981'">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1079,16 +1033,18 @@
                                         onclick="event.stopPropagation();" wire:loading.attr="disabled"
                                         wire:target="removeTemplateFile, removeExistingTemplate" class="remove-btn"
                                         style="background: #fef2f2; 
-                                        color: #dc2626; 
-                                        border: 1px solid #fecaca;
-                                        border-radius: 8px; 
-                                        padding: 10px 18px; 
-                                        z-index: 5;
-                                        transition: all 0.2s ease; 
-                                        cursor: pointer;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;"
+                        color: #dc2626; 
+                        border: 1px solid #fecaca;
+                        border-radius: 8px; 
+                        padding: 10px 16px; 
+                        font-size: 0.875rem;
+                        z-index: 15;
+                        transition: all 0.2s ease; 
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        white-space: nowrap;"
                                         title="Hapus template" onmouseover="this.style.background='#fee2e2';"
                                         onmouseout="this.style.background='#fef2f2';">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1104,7 +1060,6 @@
                                 @endif
                             </div>
                         </div>
-
                     @endif
                 </div>
 
@@ -1112,7 +1067,5 @@
                 <input type="file" id="template" wire:model="template" class="d-none"
                     accept=".pdf,.doc,.docx,.zip,.rar,.txt">
             </div>
-
-        </div>
     </form>
 </div>

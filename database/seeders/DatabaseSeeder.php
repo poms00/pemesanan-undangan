@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
 
-        //KategoriProduk::factory()->count(3)->create();
+        KategoriProduk::factory()->count(3)->create();
 
 
         //Produk::factory()->count(5)->create();

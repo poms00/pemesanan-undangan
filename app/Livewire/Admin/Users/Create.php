@@ -28,6 +28,12 @@ class Create extends Component
         'role.required' => 'Role wajib dipilih.',
     ];
 
+    // ✅ Jalankan validasi per field saat diubah
+    public function updated($property)
+    {
+        $this->validateOnly($property);
+    }
+
     public function openModal()
     {
         $this->showCreateModal = true;
@@ -59,17 +65,12 @@ class Create extends Component
                 'role' => $this->role,
             ]);
 
-            // Reset form dan tutup modal
             $this->resetForm();
             $this->showCreateModal = false;
 
-            // Emit event untuk refresh data di komponen lain
             $this->dispatch('userCreated');
-
-            // Trigger SweetAlert
             $this->dispatch('toast:success', 'Berhasil Tambah data');
         } catch (\Exception $e) {
-            // Handle error
             $this->dispatch('swal:error', [
                 'title' => 'Error!',
                 'text' => 'Terjadi kesalahan saat menambahkan user.',

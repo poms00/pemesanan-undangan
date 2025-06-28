@@ -1,4 +1,4 @@
-<div class="tw-container tw-w-full tw-p-6 tw-space-y-6  tw-mx-auto">
+<div class="tw-container tw-w-5xl tw-p-6 tw-space-y-6  tw-mx-auto">
     <!-- Header -->
     <div class="tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-shadow tw-p-6">
         <h1 class="tw-text-2xl tw-font-bold tw-text-gray-900 dark:tw-text-white tw-mb-2">Welcome Back!</h1>
@@ -41,119 +41,84 @@
                 </div>
 
                 {{-- Filter Button --}}
-                <button type="button"
-                    style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3); display: flex; align-items: center; gap: 0.5rem; min-width: fit-content;"
-                    onMouseEnter="this.style.background='linear-gradient(135deg, #2563eb, #1e40af)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'"
-                    onMouseLeave="this.style.background='linear-gradient(135deg, #3b82f6, #1d4ed8)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'"
-                    wire:click="toggleFilter()">
-                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z">
-                        </path>
-                    </svg>
-                    Filter
-                </button>
+                <div x-data="{ open: @entangle('showFilter') }" class="relative inline-block">
+                    <button type="button"
+                        @click="open = !open"
+                        class="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl text-sm font-medium shadow-md flex items-center gap-2 transition duration-300 hover:from-blue-600 hover:to-blue-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+                        </svg>
+                        Filter
+                    </button>
+                
+                    {{-- Dropdown --}}
+                    <div x-show="open" @click.outside="open = false"
+                        x-transition
+                        class="absolute top-0 right-full mr-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                        <ul class="py-1 text-sm text-gray-700">
+                            <li>
+                                <button wire:click="setFilter('semua')"
+                                    class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Semua</button>
+                            </li>
+                            <li>
+                                <button wire:click="setFilter('promo')"
+                                    class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Promo</button>
+                            </li>
+                            <li>
+                                <button wire:click="setFilter('baru')"
+                                    class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Terbaru</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                
+
             </div>
         </div>
 
         {{-- Product Cards Grid --}}
-        @if ($produks->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
-                @foreach ($produks as $produk)
-                    @if ($produk->status === 'aktif')
-                        <div
-                            class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                            {{-- Product Image --}}
-                            <div class="relative">
-                                @if ($produk->thumbnail)
-                                    <img src="{{ asset('storage/' . $produk->thumbnail) }}" alt="{{ $produk->nama }}"
-                                        class="w-full h-48 object-cover">
-                                @else
-                                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                            </path>
-                                        </svg>
-                                    </div>
-                                @endif
-
-                                {{-- Discount Badge --}}
-                                @if ($produk->diskon && $produk->diskon > 0)
-                                    <div
-                                        class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                                        -{{ $produk->diskon }}%
-                                    </div>
-                                @endif
-                            </div>
-
-                            {{-- Product Info --}}
-                            <div class="p-4">
-                                {{-- Product Name --}}
-                                <h3 class="font-semibold text-lg text-gray-800 mb-2 line-clamp-2">
-                                    {{ $produk->nama }}
-                                </h3>
-
-                                {{-- Category --}}
-                                <div class="mb-3">
-                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                        {{ $produk->kategori->nama_kategori }}
-                                    </span>
-                                </div>
-
-                                {{-- Price Section --}}
-                                <div class="flex items-center justify-between">
-                                    <div class="flex flex-col">
-                                        @if ($produk->diskon && $produk->diskon > 0)
-                                            {{-- Discounted Price --}}
-                                            @php
-                                                $hargaDiskon =
-                                                    $produk->harga - ($produk->harga * $produk->diskon) / 100;
-                                            @endphp
-                                            <span class="text-lg font-bold text-green-600">
-                                                Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
-                                            </span>
-                                            <span class="text-sm text-gray-500 line-through">
-                                                Rp {{ number_format($produk->harga, 0, ',', '.') }}
-                                            </span>
-                                        @else
-                                            {{-- Regular Price --}}
-                                            <span class="text-lg font-bold text-gray-800">
-                                                Rp {{ number_format($produk->harga, 0, ',', '.') }}
-                                            </span>
-                                        @endif
-                                    </div>
-
-                                    {{-- Action Buttons --}}
-                                    <div class="flex gap-2">
-                                        <button
-                                            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200">
-                                            Preview
-                                        </button>
-
-                                        <button type="button" class="btn btn-primary" wire:click.prevent="pilihProduk({{ $produk->id }})"
-                                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200">
-                                            Pesan
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
+        
+        {{-- Jika filter aktif, tampilkan hanya satu baris sesuai filter --}}
+        @if ($filter === 'promo')
+            <h2 class="text-xl font-semibold mb-2">Promo</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach ($produkPromo as $produk)
+                    <x-produk-card :produk="$produk" />
+                @endforeach
+            </div>
+        @elseif ($filter === 'baru')
+            <h2 class="text-xl font-semibold mb-2">Terbaru</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach ($produkBaru as $produk)
+                    <x-produk-card :produk="$produk" />
                 @endforeach
             </div>
         @else
-            {{-- Empty State --}}
-            <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada produk ditemukan</h3>
-                <p class="mt-1 text-sm text-gray-500">Coba ubah kata kunci pencarian Anda.</p>
+            {{-- Jika tidak ada filter, tampilkan semua --}}
+            <h2 class="text-xl font-semibold mb-2">Semua Produk</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach ($semuaProduk as $produk)
+                    <x-produk-card :produk="$produk" />
+                @endforeach
+            </div>
+
+            <h2 class="text-xl font-semibold mt-8 mb-2">Promo</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach ($produkPromo as $produk)
+                    <x-produk-card :produk="$produk" />
+                @endforeach
+            </div>
+
+            <h2 class="text-xl font-semibold mt-8 mb-2">Terbaru</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach ($produkBaru as $produk)
+                    <x-produk-card :produk="$produk" />
+                @endforeach
             </div>
         @endif
+
     </div>
 
 </div>

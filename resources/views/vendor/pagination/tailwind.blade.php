@@ -1,7 +1,7 @@
-@if ($paginator->hasPages())
-    <div class="tw-flex tw-flex-col tw-space-y-4 ">
-        <!-- Mobile View -->
-        <div class="tw-flex tw-justify-between tw-w-full sm:tw-hidden">
+<div class="tw-flex tw-flex-col tw-space-y-4">
+    <!-- Mobile View -->
+    <div class="tw-flex tw-justify-between tw-w-full sm:tw-hidden">
+        @if ($paginator->hasPages())
             @if ($paginator->onFirstPage())
                 <span
                     class="tw-px-3 tw-py-1.5 tw-text-sm tw-text-gray-400 tw-bg-gray-100 tw-rounded-md tw-cursor-not-allowed dark:tw-bg-gray-800 dark:tw-text-gray-600">
@@ -25,31 +25,33 @@
                     Next →
                 </span>
             @endif
+        @endif
+    </div>
+
+    <!-- Desktop View -->
+    <div class="tw-hidden sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-w-full">
+        <!-- Left Section: Per Page Selector (Always visible) -->
+        <div class="tw-flex tw-items-center tw-space-x-2 tw-relative tw-z-10">
+            <span class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">Show</span>
+            <div class="tw-relative">
+                <select wire:model.live="perPage" id="perPage"
+                    class="tw-px-3 tw-py-1.5 tw-text-sm tw-border tw-border-gray-300 tw-rounded-md tw-bg-white focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-purple-500 focus:tw-border-purple-500 dark:tw-bg-gray-800 dark:tw-border-gray-600 dark:tw-text-gray-300 dark:focus:tw-ring-purple-400 tw-relative tw-z-20 tw-appearance-none tw-pr-8">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <div class="tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-pr-2 tw-pointer-events-none">
+                    <svg class="tw-w-4 tw-h-4 tw-text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <span class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">entries per page</span>
         </div>
 
-        <!-- Desktop View -->
-        <div class="tw-hidden sm:tw-flex sm:tw-items-center sm:tw-justify-between sm:tw-w-full">
-            <!-- Left Section: Per Page Selector -->
-            <div class="tw-flex tw-items-center tw-space-x-2 tw-relative tw-z-10">
-                <span class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">Show</span>
-                <div class="tw-relative">
-                    <select wire:model.live="perPage" id="perPage"
-                        class="tw-px-3 tw-py-1.5 tw-text-sm tw-border tw-border-gray-300 tw-rounded-md tw-bg-white focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-purple-500 focus:tw-border-purple-500 dark:tw-bg-gray-800 dark:tw-border-gray-600 dark:tw-text-gray-300 dark:focus:tw-ring-purple-400 tw-relative tw-z-20 tw-appearance-none tw-pr-8">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
-                    <div class="tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-pr-2 tw-pointer-events-none">
-                        <svg class="tw-w-4 tw-h-4 tw-text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                </div>
-                <span class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">entries per page</span>
-            </div>
-
-            <!-- Center Section: Pagination Links -->
+        <!-- Center Section: Pagination Links (Only show if has pages) -->
+        @if ($paginator->hasPages())
             <div class="tw-flex tw-items-center tw-space-x-1 tw-relative tw-z-0">
                 @if ($paginator->onFirstPage())
                     <span
@@ -104,13 +106,16 @@
                     </span>
                 @endif
             </div>
+        @else
+            <!-- Empty space to maintain layout when no pagination -->
+            <div class="tw-flex-1"></div>
+        @endif
 
-            <!-- Right Section: Info Text -->
-            <div class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">
-                Showing <span class="tw-font-semibold tw-text-purple-600">{{ $paginator->firstItem() ?? 0 }}</span>
-                to <span class="tw-font-semibold tw-text-purple-600">{{ $paginator->lastItem() ?? 0 }}</span>
-                of <span class="tw-font-semibold">{{ $paginator->total() }}</span> results
-            </div>
+        <!-- Right Section: Info Text (Always visible) -->
+        <div class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">
+            Showing <span class="tw-font-semibold tw-text-purple-600">{{ $paginator->firstItem() ?? 0 }}</span>
+            to <span class="tw-font-semibold tw-text-purple-600">{{ $paginator->lastItem() ?? 0 }}</span>
+            of <span class="tw-font-semibold">{{ $paginator->total() }}</span> results
         </div>
     </div>
-@endif
+</div>
