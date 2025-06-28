@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MidtransController;
 
 
 
@@ -16,3 +17,4 @@ Route::view('profile', 'profile')
 
 require __DIR__.'/auth.php';
 
+Route::post('/midtrans/callback', [MidtransController::class, 'handle']);

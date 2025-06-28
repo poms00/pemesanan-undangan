@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('currency')->default('IDR');
 
             // Status transaksi dari Midtrans
-            $table->string('transaction_status')->nullable(); // pending, settlement, cancel, expire, deny
-            $table->string('fraud_status')->nullable(); // accept, challenge, deny
+            $table->string('transaction_status')->nullable(); 
+            $table->string('fraud_status')->nullable(); 
             $table->string('status_code')->nullable(); // e.g. 201, 200, 407
             $table->string('status_message')->nullable(); // e.g. "Success, transaction is found"
 
