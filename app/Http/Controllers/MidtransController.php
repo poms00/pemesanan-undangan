@@ -14,15 +14,33 @@ class MidtransController extends Controller
 
         $orderId = $request->input('order_id');
         $statusCode = $request->input('status_code');
-        $grossAmount = $request->input('gross_amount');
-        $signatureKey = $request->input('signature_key');
 
+        // Format gross_amount jadi 2 angka di belakang koma
+        $grossAmountRaw = $request->input('gross_amount');
+        $grossAmount = number_format((float) $grossAmountRaw, 2, '.', '');
+
+        $signatureKey = $request->input('signature_key');
         $serverKey = env('MIDTRANS_SERVER_KEY');
+
+        // Signature generation sesuai dokumentasi Midtrans
         $input = $orderId . $statusCode . $grossAmount . $serverKey;
         $computedSignature = hash('sha512', $input);
 
+        // Log untuk pengecekan kesalahan signature
+        Log::debug('Signature Debug', [
+            'order_id' => $orderId,
+            'status_code' => $statusCode,
+            'gross_amount' => $grossAmount,
+            'input' => $input,
+            'expected_signature' => $computedSignature,
+            'received_signature' => $signatureKey,
+        ]);
+
         if ($signatureKey !== $computedSignature) {
-            Log::warning('Invalid signature', ['computed' => $computedSignature, 'received' => $signatureKey]);
+            Log::warning('Invalid signature', [
+                'computed' => $computedSignature,
+                'received' => $signatureKey
+            ]);
             return response('Invalid signature', 403);
         }
 
