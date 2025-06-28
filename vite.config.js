@@ -12,6 +12,7 @@ export default defineConfig({
         devSourcemap: true,
     },
     build: {
-        sourcemap: true, 
+        sourcemap: true,
     },
+    base: "/build/", // 🛠️ pastikan path asset benar
 });
