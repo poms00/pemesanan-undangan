@@ -56,23 +56,14 @@ class MidtransController extends Controller
      */
     private function verifySignature($orderId, $statusCode, $grossAmount, $signatureKey, $serverKey)
     {
-        // Format gross_amount sesuai dokumentasi (tanpa trailing zeros)
-        $formattedGrossAmount = number_format((float) $grossAmount, 2, '.', '');
-
-        // Hapus trailing zeros untuk signature
-        $formattedGrossAmount = rtrim($formattedGrossAmount, '0');
-        $formattedGrossAmount = rtrim($formattedGrossAmount, '.');
-
-        // Generate signature
-        $input = $orderId . $statusCode . $formattedGrossAmount . $serverKey;
+        // Gunakan string mentah dari Midtrans (tanpa format ulang)
+        $input = $orderId . $statusCode . $grossAmount . $serverKey;
         $computedSignature = hash('sha512', $input);
 
-        // Log untuk debugging
         Log::debug('Signature Verification', [
             'order_id' => $orderId,
             'status_code' => $statusCode,
-            'gross_amount_raw' => $grossAmount,
-            'gross_amount_formatted' => $formattedGrossAmount,
+            'gross_amount' => $grossAmount,
             'input_string' => $input,
             'computed_signature' => $computedSignature,
             'received_signature' => $signatureKey,
@@ -81,6 +72,7 @@ class MidtransController extends Controller
 
         return hash_equals($computedSignature, $signatureKey);
     }
+
 
     /**
      * Update data transaksi dengan data dari notification
