@@ -50,8 +50,7 @@
                 </div>
 
                 <!-- Order Details -->
-                <div
-                    style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 120px; gap: 4px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; min-width: 120px; gap: 4px;">
                     <p style="font-size: 14px; font-family: monospace; color: #374151; margin: 0;">
                         {{ $pesanan->transaksi->order_id ?? '-' }}
                     </p>

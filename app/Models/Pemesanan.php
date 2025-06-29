@@ -17,10 +17,10 @@ class Pemesanan extends Model
         'nama_template',
         'nama_mempelai_pria',
         'nama_mempelai_wanita',
-        'tanggal_acara', // ✅ harusnya tanggal_acara sesuai migrasi
+        'tanggal_acara', 
         'jumlah_tamu',
         'lokasi',
-        'nomor_telepon', // ✅ ini belum ada di fillable Anda sebelumnya
+        'nomor_telepon', 
         'status_pemesanan',
         'link_undangan',
     ];

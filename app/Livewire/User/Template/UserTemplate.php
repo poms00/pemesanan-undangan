@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Produk;
 use Illuminate\Support\Facades\Auth;
 use App\Services\MidtransService;
+use Carbon\Carbon;
 
 class UserTemplate extends Component
 {
@@ -40,7 +41,6 @@ class UserTemplate extends Component
         // Siapkan order_id
         $order_id = 'INV-' . now()->format('YmdHis') . '-' . rand(1000, 9999);
 
-
         // Buat Snap Token
         $midtransService = app(MidtransService::class);
         $snapTransaction = $midtransService->createSnapTransaction([
@@ -60,6 +60,11 @@ class UserTemplate extends Component
                     'name' => $produk->nama,
                 ]
             ],
+            'expiry' => [
+                'start_time' => Carbon::now()->format('Y-m-d H:i:s O'), // waktu saat order dibuat, pakai timezone
+                'unit' => 'hours',   // bisa juga 'minutes' atau 'days'
+                'duration' => 24     // expired dalam 24 jam
+            ]
         ]);
 
         $snapToken = $snapTransaction->token ?? null;
@@ -82,7 +87,7 @@ class UserTemplate extends Component
         ]);
 
         // Debug isi session
-       // dd(session('checkout'));
+        // dd(session('checkout'));
 
         // Redirect ke halaman checkout
         return redirect()->route('user.checkout.user-order');
