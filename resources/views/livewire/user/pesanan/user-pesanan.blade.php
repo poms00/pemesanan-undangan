@@ -55,17 +55,17 @@
                     <p style="font-size: 14px; font-family: monospace; color: #374151; margin: 0;">
                         {{ $pesanan->transaksi->order_id ?? '-' }}
                     </p>
-                    <p
-                        style="font-weight: 600; color: #16a34a; font-size: 14px; display: flex; align-items: center; gap: 4px; margin: 0;">
+                    <p style="font-weight: 600; color: #16a34a; font-size: 14px; display: flex; align-items: center; gap: 4px; margin: 0;">
                         <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 13l4 4L19 7" />
                         </svg>
                         {{ ucfirst($pesanan->status_pemesanan) }}
                     </p>
+                    
                     @if ($pesanan->transaksi && $pesanan->transaksi->settlement_time)
                         <p style="font-size: 11px; color: #6b7280; margin: 0;">
-                            Dikirim {{ \Carbon\Carbon::parse($pesanan->transaksi->settlement_time)->diffForHumans() }}
+                            Pembayaran-dikonfirmasi {{ \Carbon\Carbon::parse($pesanan->transaksi->settlement_time)->timezone('Asia/Jakarta')->diffForHumans() }}
                         </p>
                     @endif
                 </div>
